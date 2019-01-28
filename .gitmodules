@@ -1,0 +1,3 @@
+[submodule "scripting/include/newdecl-handles"]
+	path = scripting/include/newdecl-handles
+	url = https://github.com/nosoop/newdecl-handles

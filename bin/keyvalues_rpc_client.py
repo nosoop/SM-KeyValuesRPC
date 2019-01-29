@@ -7,6 +7,9 @@ import socket
 
 RPC_CONNECTION = ('127.0.0.1', 27115)
 
+class KVRPCException(Exception):
+	pass
+
 def keyvalues_rpc_call(method: str, **kwargs):
 	'''
 	Performs a KeyValues RPC call.
@@ -20,6 +23,13 @@ def keyvalues_rpc_call(method: str, **kwargs):
 		}
 		caller.send(vdf.dumps({ 'keyvalues_rpc': call_dict }).encode('utf8'))
 		response = vdf.loads(caller.recv(4096).decode('utf8')).get('keyvalues_rpc')
+		
+		error = response.get('error')
+		if error:
+			raise KVRPCException({
+				'message': error.get('message'),
+				'code': error.get('code')
+			})
 		
 		result = response.get('result')
 		return dict(result) if result else None

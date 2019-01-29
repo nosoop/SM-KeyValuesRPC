@@ -11,7 +11,7 @@
 
 #include <newdecl-handles/socket>
 
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.0.1"
 public Plugin myinfo = {
 	name = "[ANY] KeyValues RPC",
 	author = "nosoop",
@@ -49,8 +49,6 @@ int g_iCurrentPort;
 ConVar g_ConVarBindHost, g_ConVarBindPort;
 
 public void OnPluginStart() {
-	g_RPCMethods = new StringMap();
-	
 	g_ConVarBindHost = CreateConVar("kv_rpc_bind_host", "127.0.0.1",
 			"The hostname / IP address the KeyValues RPC server socket is bound to.");
 	g_ConVarBindPort = CreateConVar("kv_rpc_bind_port", "27115",
@@ -74,7 +72,6 @@ static void RebindServer(const char[] host, int port) {
 	}
 	g_ServiceSocket = new Socket(SOCKET_TCP, OnSocketError);
 	
-	// Bind it to loopback only for slightly more secure use
 	if (g_ServiceSocket.Bind(host, port)) {
 		PrintToServer("[keyvalues-rpc] Server is bound to %s:%d", host, port);
 		g_ServiceSocket.Listen(OnSocketIncoming);
@@ -257,6 +254,10 @@ void WriteKeyValuesToSocket(Socket socket, KeyValues kv) {
  * handle in `hForward`.
  */
 static bool GetRegisteredKeyValuesCall(const char[] name, Handle &hForward = INVALID_HANDLE) {
+	if (!g_RPCMethods) {
+		g_RPCMethods = new StringMap();
+	}
+	
 	if (!g_RPCMethods.GetValue(name, hForward)) {
 		return false;
 	}

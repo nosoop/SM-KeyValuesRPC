@@ -36,7 +36,7 @@ def keyvalues_rpc_call(method: str, **kwargs):
 
 def keyvalues_rpc_notification(method: str, **kwargs):
 	'''
-	Performs a KeyValues RPC call.
+	Performs a KeyValues RPC notification; no return value is received.
 	'''
 	with socket.create_connection(RPC_CONNECTION) as caller:
 		call_dict = {
